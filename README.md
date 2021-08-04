@@ -26,7 +26,7 @@ The upset diagram shows the number of movies of each common genre and the number
 In the upset plot, drama movies are shown in red, drama-action movies in blue and drama-action-comedy movies in orange.
 
 
-A scatterplot was used to show the released date and average ratings of the movies. Same colors were used to highlight the genres fo interest.
+A scatterplot was used to show the released date and average ratings of the movies. Same colors were used to highlight the genres of interest.
 
 
 As we could observe, the numbers differ from the Venn diagram as we could now consider the 17 movie genres.
