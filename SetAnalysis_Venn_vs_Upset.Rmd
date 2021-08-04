@@ -1,0 +1,202 @@
+---
+title: "Set Analysis: Venn Diagrams vs Upset Diagrams"
+author: "Melisa Di Giacomo"
+output: html_document
+#code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r setup 2, include=FALSE}
+rm(list = ls(all = TRUE))
+
+# Libraries 
+library(UpSetR)
+library(ggplot2)
+library(grid)
+library(plyr)
+library(dplyr)
+library(knitr)
+library(VennDiagram)
+```
+
+
+# General Objective
+
+
+*The aim was to demonstrate graphically the advantages of using Upset diagrams over Venn diagrams.*
+
+
+# Movies dataset
+
+A list of movies from 1920 until 2000 was used as dataset. A summary of the list is shown.
+
+```{r movies, echo=FALSE}
+movies <- read.csv(system.file("extdata", "movies.csv", package = "UpSetR"), 
+                   header = T, sep = ";")
+
+# Choose columns to show
+movies_sum <- transmute(movies, Movie = Name, ReleaseDate, Action, Comedy, Drama, Thriller, Romance, Average_Rating = AvgRating)
+
+# First ten rows of dataset
+summary <- head(movies_sum, 10)
+
+# First ten rows of dataset in table format
+knitr::kable(summary, col.names = gsub("[.]", " ", names(summary)), caption = "Table 1. Movies dataset")
+```
+
+
+# Venn diagrams
+
+
+The movies dataset has 17 different genres. If we are familiarized with Venn diagrams, we know they only work well with two to four sets. More sets could be possible but may be tedious. For that reason, the movies dataset was reduced and the three most common genres were considered: Drama, Comedy and Action. The other genres were dissmised from the dataset.
+
+
+```{r movies1, echo=FALSE}
+movies1 <- transmute(movies, Movie = Name, Action, Comedy, Drama)
+summary1 <- tail(movies1, 5)
+
+# First ten rows of dataset in table format
+knitr::kable(summary1, col.names = gsub("[.]", " ", names(summary1)), caption = "Table 2. Movies in the three most common genres.")
+```
+
+
+```{r sets, echo=FALSE}
+# Prepare the sets 
+# In order to have easy names, the three sets we previously separated.
+Drama <- sum(movies1$Drama == 1)
+Action <- sum(movies1$Action == 1)
+Comedy <- sum(movies1$Comedy == 1)
+DramaAction <- sum((movies1$Drama == 1) & (movies1$Action == 1))
+DramaComedy <- sum((movies1$Drama == 1) & (movies1$Comedy == 1))
+ActionComedy <- sum((movies1$Action == 1) & (movies1$Comedy == 1))
+DramaActionComedy <- sum((movies1$Drama == 1) & (movies1$Action == 1) & (movies1$Comedy == 1))
+```
+
+
+Each circle represents one of the three most common movie genres: Drama, Comedy and Action. 1287 movies were categorized as Drama, 919 as Comedy and 348 as Action. Only 10 movies were categorized under the three genres. 
+
+
+```{r venn_diagram, echo=TRUE}
+# Venn Diagram
+draw.triple.venn(area1 = Drama, area2 = Comedy, area3 = Action,
+                 n12 = DramaComedy, n23 = ActionComedy, n13 = DramaAction, n123 = DramaActionComedy,
+                 fill = c('#fc8d62','#8da0cb','#e78ac3'), alpha = 0.65, lty = 'blank',
+                 category = c('Drama', 'Comedy', 'Action'), cat.col = c('#fc8d62','#8da0cb','#e78ac3'),
+                 cat.cex = 2, cex = 2)
+```
+
+
+# Upset diagrams
+
+
+The upset diagram shows the number of movies of each common genre and the number of movies that have been cathegorized in more than one genre. The advantage of this kind of plot is that we could consider the 17 movie genres.
+
+
+Drama movies were the most common ones. 1039 movies were cathegorized solely as drama and 1603 movies featured drama as the only genre or as a shared genre.
+
+
+As we could observe, the numbers differ from the Venn diagram as we could now consider the 17 movie genres.
+
+
+```{r upsetplot, echo=TRUE}
+#Upset diagram
+upset(movies, main.bar.color = "black", queries = list(list(query = intersects, params = list("Drama"), color = "#ff0000", active = T)), mainbar.y.label = "Movies", sets.x.label = "Total movies by genre")
+```
+
+
+Beside the Upset diagrams, we could add other informative plots.
+
+
+##  Attribute histogram
+
+
+The histogram plots show the frequency of the released date and the average rating (1-5).The majority of the movies were released after the '80s. As for the ratings, the movies were ranked on average between 3 and 4.
+
+
+```{r histogram, echo=FALSE}
+upset(movies, main.bar.color = "black", queries = list(list(query = intersects, params = list("Drama"), color = "#ff0000", active = T)), mainbar.y.label = "Movies", sets.x.label = "Total movies by genre",
+      attribute.plots = list(gridrows = 50, plots = list(list(plot = histogram, x = "ReleaseDate", queries = T), list(plot = histogram, x = "AvgRating", queries = T)), ncols = 2))
+```
+
+
+## Attribute scatterplot
+
+
+In the upset plot, drama movies are shown in red, drama-action movies in blue and drama-action-comedy movies in orange.
+
+
+A scatterplot was used to show the released date and average ratings of the movies. Same colors were used to highlight the genres fo interest.
+
+
+```{r scatterplot, echo=FALSE}
+upset(movies, main.bar.color = "black", sets.bar.color = "#bdbdbd",
+      queries = list(list(query = intersects, params = list("Drama"), color = "red", active = T), 
+                      list(query = intersects, params = list("Action", "Drama"), color = "#3182bd", active = T), 
+                      list(query = intersects, params = list("Drama", "Comedy", "Action"), color = "orange", active = T)),
+      mainbar.y.label = "Movies", sets.x.label = "Total movies by genre",
+      attribute.plots = list(gridrows = 45, plots = list(list(plot = scatter_plot, x = "ReleaseDate", y = "AvgRating",
+      queries = T), list(plot = scatter_plot, x = "AvgRating", y = "Watches", queries = T)), ncols = 2))
+      #query.legend = "bottom"
+```
+
+
+## Custom attribute plot
+
+
+A function was built to customize a density plot to show the distribution of movies in decades. Movies released after the '70s were plotted.
+
+
+Code of function:
+
+
+```{r function, echo=TRUE}
+# Funtion for custom plot
+myplot <- function(data, x, y) {
+  data$decades <- round_any(as.integer(unlist(data[y])), 10, ceiling) # group movies in decades
+  data <- data[which(data$decades >= 1970), ] # movies after the '70s
+  myplot <- (ggplot(data, aes_string(x = x)) + 
+              geom_density(aes(fill = factor(decades)), alpha = 0.4) + theme_classic() + # density plot
+              #scale_fill_manual(values = c('#1b9e77','#d95f02','#7570b3','#e7298a')) + # specify colors
+              theme(plot.margin = unit(c(0.2, 0.2, 0.2, 0.2), "cm"), legend.key.size = unit(0.4, "cm")))
+}
+
+```
+
+
+```{r customplot, echo=FALSE}
+upset(movies, main.bar.color = "black", sets.bar.color = "#bdbdbd",
+      queries = list(list(query = intersects,params = list("Drama"), color = "red", active = T), 
+                list(query = intersects, params = list("Action", "Drama"), active = T), 
+                list(query = intersects, params = list("Drama", "Comedy", "Action"), color = "orange", active = T)),
+      mainbar.y.label = "Movies", sets.x.label = "Total movies by genre", 
+      attribute.plots = list(gridrows = 45, plots = list(list(plot = myplot, x = "AvgRating", 
+      y = "ReleaseDate", queries = F)), ncols = 1))
+```
+
+
+## Intersection Box Plots
+
+
+A box plot of the average ratings was plotted.
+
+
+```{r intersection boxplot, echo=FALSE}
+upset(movies, main.bar.color = "#969696", sets.bar.color = '#de2d26', mainbar.y.label = "Movies", sets.x.label = "Total movies by genre", boxplot.summary = c("AvgRating"))
+```
+
+
+# Conclusions
+
+
+**Venn diagrams** are easy to read without much explanation. But this relies on the low number of sets they could deliver.
+On the other hand, **Upset diagrams** provide more clarity when there are more than three or four sets. All the options are taking into account and they provide more information. These diagrams could also be accompanied by other scatterplots, density plots or histograms, as it was shown.
+
+
+In conclusion, when having a low number of sets, Venn diagrams work very well but we can always count on using Upset diagrams.
+
+
+
