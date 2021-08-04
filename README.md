@@ -2,7 +2,7 @@
 * This code shows graphically the differences between Venn and Upset diagrams.
 
 ## Code and Resources Used 
-**R Version:** 3.6.3
+**R Version:** 3.6.3  
 **Packages:** VennDiagram, UpSetR, ggplot2, grid, plyr, dplyr, knitr
 
 ## Dataset
@@ -15,7 +15,7 @@ A Venn diagrams and an Upset diagram were plotted to show the differences.
 Each circle represents one of the three most common movie genres: Drama, Comedy and Action. 1287 movies were categorized as Drama, 919 as Comedy and 348 as Action. Only 10 movies were categorized under the three genres.
 
 
-![VennDiagram]()&nbsp;
+![VennDiagram](https://github.com/melisadigiacomo/SetAnalysis/blob/master/images/VennDiagram.png)&nbsp;
 
 If we are familiarized with Venn diagrams, we know they only work well with two to four sets. More sets could be possible but may be tedious. For that reason, the movies dataset was reduced and the three most common genres were considered: Drama, Comedy and Action. The other genres were dissmised from the dataset.
 
@@ -32,7 +32,7 @@ A scatterplot was used to show the released date and average ratings of the movi
 As we could observe, the numbers differ from the Venn diagram as we could now consider the 17 movie genres.
 
 
-![AttributeScatterplot]()&nbsp;
+![AttributeScatterplot](https://github.com/melisadigiacomo/SetAnalysis/blob/master/images/AttributeScatterplot.png)&nbsp;
 
 
 # Conclusions
