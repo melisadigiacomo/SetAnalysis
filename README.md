@@ -17,7 +17,7 @@ Each circle represents one of the three most common movie genres: Drama, Comedy 
 
 ![VennDiagram](https://github.com/melisadigiacomo/SetAnalysis/blob/master/images/VennDiagram.png)&nbsp;
 
-If we are familiarized with Venn diagrams, we know they only work well with two to four sets. More sets could be possible but may be tedious. For that reason, the movies dataset was reduced and the three most common genres were considered: Drama, Comedy and Action. The other genres were dissmised from the dataset.
+If we are familiarized with Venn diagrams, we know they only work well with two to four sets. More sets could be possible but may be tedious (check out this ![thread](https://threadreaderapp.com/thread/1108498701427732481.html) by ![@tweetsauce](https://twitter.com/tweetsauce)). For that reason, the movies dataset was reduced and the three most common genres were considered: Drama, Comedy and Action. The other genres were dissmised from the dataset.
 
 
 # Upset diagram
