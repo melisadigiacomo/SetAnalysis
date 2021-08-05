@@ -35,8 +35,8 @@ As we could observe, the numbers differ from the Venn diagram as we could now co
 ![AttributeScatterplot](https://github.com/melisadigiacomo/SetAnalysis/blob/master/images/AttributeScatterplot.png)&nbsp;
 
 
-# Conclusions
+# Conclutions
 Venn diagrams are easy to read without much explanation. But this relies on the low number of sets they could deliver. On the other hand, Upset diagrams provide more clarity when there are more than three or four sets. All the options are taking into account and they provide more information. These diagrams could also be accompanied by other scatterplots, density plots or histograms, as it was shown.
 
 
-In conclusion, when having a low number of sets, Venn diagrams work very well but we can always count on using Upset diagrams.
+In conclution, when having a low number of sets, Venn diagrams work very well but we can always count on using Upset diagrams.
