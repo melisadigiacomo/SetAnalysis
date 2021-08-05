@@ -189,14 +189,14 @@ upset(movies, main.bar.color = "#969696", sets.bar.color = '#de2d26', mainbar.y.
 ```
 
 
-# Conclusions
+# Conclutions
 
 
 **Venn diagrams** are easy to read without much explanation. But this relies on the low number of sets they could deliver.
 On the other hand, **Upset diagrams** provide more clarity when there are more than three or four sets. All the options are taking into account and they provide more information. These diagrams could also be accompanied by other scatterplots, density plots or histograms, as it was shown.
 
 
-In conclusion, when having a low number of sets, Venn diagrams work very well but we can always count on using Upset diagrams.
+In conclution, when having a low number of sets, Venn diagrams work very well but we can always count on using Upset diagrams.
 
 
 
